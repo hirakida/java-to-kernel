@@ -1,0 +1,36 @@
+import org.gradle.internal.jvm.Jvm
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'c'
+}
+
+group 'com.github.hirakida'
+version '1.0-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+model {
+    components {
+        hirakida(NativeLibrarySpec) {
+            binaries.all {
+                cCompiler.args '-I', "${Jvm.current().javaHome}/include"
+                cCompiler.args '-I', "${Jvm.current().javaHome}/include/linux"
+                cCompiler.args '-I', "${projectDir}/module"
+                cCompiler.args '-D_FILE_OFFSET_BITS=64'
+            }
+        }
+    }
+}
+
+build.dependsOn 'hirakidaSharedLibrary'
+
+mainClassName = 'com.github.hirakida.Main'
+
+run {
+    systemProperty 'java.library.path', file("${buildDir}/libs/hirakida/shared").absolutePath
+}
