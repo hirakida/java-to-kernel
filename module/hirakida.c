@@ -73,7 +73,7 @@ static ssize_t hirakida_read(struct file *file, char __user *buf, size_t count, 
 
     p = file->private_data;
 
-    if(count > HIRKIDA_BUF_SIZE) {
+    if (count > HIRKIDA_BUF_SIZE) {
         count = HIRKIDA_BUF_SIZE;
     }
 
@@ -88,6 +88,10 @@ static ssize_t hirakida_write(struct file *file, const char __user *buf, size_t 
     struct hirakida_data *p;
 
     p = file->private_data;
+
+    if (count > HIRKIDA_BUF_SIZE) {
+        count = HIRKIDA_BUF_SIZE;
+    }
 
     if (copy_from_user(p->buf, buf, count) != 0) {
         return -EFAULT;
